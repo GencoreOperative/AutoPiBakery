@@ -1,18 +1,29 @@
 # AutoPiBakery
 
-A project with the goal of a single Docker command producing a Raspberry Pi image which includes the desired project executable.
+A Docker project which aims to make creating a Raspberry Pi project simple. Getting the image, configuration, and your project code onto the Pi are all steps that need to be repeated. This project helps mix these ingredients together in one command.
+
+All of this would not be possible without the great work of MrSimonEmms and the PiOven project.
 
 # Overview
 
-When working on projects, as engineers we are used to being able to automate the build process to generate the final artifact of the project. If the target for the project is a Raspberry Pi based project then it is logical to automate the production of the image used to flash the Raspberry Pi.
+At a high level, the Docker command for this project will start with a stock Raspbian image. Then it will apply a number of configurations to the image such as SSH and WiFi settings. Next the command will copy in any project files you want to use for the project before finally baking the entire image. This can then be flashed on to the Raspberry Pi as a single artifact which is ready to use.
 
-This project attempts to automate the process of building a finished Raspberry Pi image which has the users project files included in the generated image. It builds upon the great work by MrSimonEmms and the PiOven project.
+The motivation behind this project is to take some of the repetition out of the process of making a Raspberry Pi project. Typically as engineers we are used to automating many stages of development. Creating the artifact to deploy to the Raspberry Pi should be no different in this regard.
 
-The ambition for this project is that the user provides a single Docker command which can then generate the finished Raspberry Pi image. Initial target for the project is a Raspberry Pi Zero running Raspbian Jessie. This project could be expanded to support other variants quite easily.
+# Folder Structure
 
-# Build
+In order to use this Docker command you will want to have two folders in a local directory.
 
-docker build -t auto-pi-bakery:raspbian-jessie .
+* `input`: will contain the project files you would like included in the Raspberry Pi image.
+* `output`: will be the location where the image is generated to and includes any other needed files made during the generation process.
+
+# Input Files
+
+These are the project files and essentially needs to be everything you need for your project. For example, if it is a Java application then you will need to include the Java Runtime as well. Because these files will be executing on the Raspberry Pi they all need to be aimed at the ARM CPU architecture.
+
+Importantly, there needs to be a script called `start.sh`. This script will be the entry point for your project and should both install any dependencies into the Raspberry Pi and also launch the project.
+
+`start.sh` will be called once on startup of the Raspberry Pi.
 
 # Run Examples
 
@@ -24,7 +35,7 @@ This example generates an image which has built in Wireless Settings. These are 
 The output from this command will be the finished Raspberry Pi image and so we need to provide a target folder for the output to be stored in.
 
 ```
-rm -r target && mkdir target
+rm -r output && mkdir output
 ```
 
 ```
@@ -33,7 +44,7 @@ docker run \
     --privileged \
     -e PI_WIFI_SSID=<wireless SSID> \
     -e PI_WIFI_PASS=<wireless Password> \
-    -v $PWD/target:/target \
+    -v $PWD/output:/output \
     -ti auto-pi-bakery:raspbian-jessie
 ```
 
