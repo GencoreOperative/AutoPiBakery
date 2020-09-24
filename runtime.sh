@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# A script which will run after the Docker image is build but before the
-# pibuilder.sh script.
+# A script which wraps the pibuilder.sh script with tasks that need to be
+# performed before and after the script.
 
 cd /opt/pibuilder
 
@@ -12,6 +12,11 @@ fi
 if [ -n "$PI_WIFI_PASS" ]; then
 	echo "PI_WIFI_PASS=$PI_WIFI_PASS" >> /opt/pibuilder/settings.sh
 fi
+
+# Generate an public/private key pair required for the image and user
+mkdir /ssh-keys 
+ssh-keygen -f /ssh-keys/zero -P "" -C "Key for Raspberry Pi"
+cp /ssh-keys/zero* /target
 
 # Draw in all files from local folder and find a way to include them into the target image
 # TODO - how best to do this?

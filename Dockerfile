@@ -1,17 +1,17 @@
 FROM riggerthegeek/pibuilder:0.2.1
 
-# Build time
+# Download the Raspbian Jessie base image from raspberrypi.org. It needs to be named
+# as the MD5 sum of the URL text for the script to pick it up in the cache
+RUN mkdir /opt/pibuilder/cache && \
+curl -# https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2017-07-05/2017-07-05-raspbian-jessie-lite.zip -o /opt/pibuilder/cache/os.76a0dae971f3a690a6422b6babbf2840.zip
 
-# Draw in the Jessie image and place in the correct location with a specific filename
-# The target image needs to be named as the MD5 sum of the URL text script to pick it up
-# https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2017-07-05/2017-07-05-raspbian-jessie-lite.zip becomes 76a0dae971f3a690a6422b6babbf2840
-COPY 2017-07-05-raspbian-jessie-lite.zip /opt/pibuilder/cache/os.76a0dae971f3a690a6422b6babbf2840.zip
+# Setup input/output folders
+RUN mkdir /input /output
 
-# Draw in the settings file which we will modify at runtime.
+# Copy in fixed settings known before runtime.
 COPY settings.sh /opt/pibuilder/settings.sh
 
+# Runtime script handles all other setup
 COPY runtime.sh /opt/pibuilder/runtime.sh
-
-COPY zero.pub /ssh-keys
 
 CMD sh /opt/pibuilder/runtime.sh
