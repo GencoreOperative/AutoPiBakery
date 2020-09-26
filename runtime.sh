@@ -16,19 +16,12 @@ if [ -n "$PI_WIFI_PASS" ]; then
 fi
 
 # Generate an public/private key pair required for the image and user
-mkdir /ssh-keys 
 ssh-keygen -f /ssh-keys/key -P "" -C "Key for Raspberry Pi"
 cp /ssh-keys/* /output
 echo "PI_SSH_KEY=/ssh-keys/key.pub" >> $SETTINGS
 
-# If there are local files to include, copy them to the image
-if [  -f /input/start.sh ]; then
-	# We need to patch the pibuilder script to perform these steps
-	#DATA=/media/rpi_root/opt/data
-	#cp /input/* $DATA
-	#chmod +x $DATA/start.sh
-	#echo "$DATA/start.sh" >> /media/rpi_root/etc/rc.local
-fi
-
+# Run the pibuilder.sh script which generates the image
 sh ./scripts/pibuilder.sh
+
+# Copy the image to the mounted output folder
 cp /opt/pibuilder/cache/os.img /output/auto-raspbian-jessie.img

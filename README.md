@@ -25,6 +25,8 @@ Importantly, there needs to be a script called `start.sh`. This script will be t
 
 `start.sh` will be called once on startup of the Raspberry Pi.
 
+Space is limited to a few hundred MB.
+
 # Run Examples
 
 This example generates an image which has built in Wireless Settings. These are specified using the following environment variables:
@@ -46,6 +48,28 @@ docker run \
     -e PI_WIFI_PASS=<wireless Password> \
     -v $PWD/output:/output \
     -ti auto-pi-bakery:raspbian-jessie
+```
+
+# Contacting the Raspberry Pi
+
+TODO: https://www.raspberrypi.org/documentation/remote-access/ip-address.md
+
+Once the Pi has been powered on, it will start its boot up sequence which will include automatic configuration of the Wireless settings (if used) and other configuration. Once it has completed this setup it will be accessible on the local network with the standard multicast network address:
+
+```
+$ ping raspberrypi.local
+PING raspberrypi.local (192.168.1.84): 56 data bytes
+64 bytes from 192.168.1.84: icmp_seq=0 ttl=64 time=7.699 ms
+64 bytes from 192.168.1.84: icmp_seq=1 ttl=64 time=7.195 ms
+```
+
+DETAIL here: after the first boot, this address will no longer respond. Instead the new hostname of the system will respond. Therefore knowing the hostname of the system is important.
+
+
+From here we can SSH onto the device by using the private key that was generated as part of the installation:
+
+```
+$ ssh -i output/key user@192.168.1.84
 ```
 
 *Available Space*
