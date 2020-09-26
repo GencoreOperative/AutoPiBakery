@@ -20,10 +20,10 @@ COPY runtime.sh /opt/pibuilder/runtime.sh
 # Install GNU Patch so we can easily patch the pibuilder.sh script
 RUN cd /tmp && curl -s https://ftp.gnu.org/gnu/patch/patch-2.7.tar.gz | tar xvzf - && cd /tmp/patch-2.7/ && ./configure && make && make install
 
-COPY pibuilder.patch /opt/pibuilder/scripts
+COPY patches/pibuilder.patch /opt/pibuilder/scripts
 RUN cd /opt/pibuilder/scripts && patch pibuilder.sh pibuilder.patch && rm pibuilder.patch
 
-COPY first_run.patch /opt/pibuilder/scripts
+COPY patches/first_run.patch /opt/pibuilder/scripts
 RUN cd /opt/pibuilder/scripts && patch first_run.sh first_run.patch && rm first_run.patch
 
 CMD sh /opt/pibuilder/runtime.sh
