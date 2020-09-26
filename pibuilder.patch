@@ -1,0 +1,31 @@
+116a117,146
+> # Install the users application
+> if [  -f /input/start.sh ]; then
+>   
+>   echo "Installing user application"
+>   APP="${ROOT_DIR}/opt/app"
+>   mkdir -p ${APP}
+>   cp -Rf /input/* "${APP}"
+>   chmod 755 "${APP}/start.sh"
+> 
+>   echo "Contents of /opt/app"
+>   ls -las ${APP}
+>   
+>   echo ""
+>   echo "Updating rc.local with launch script"
+> 
+>   LOCAL="${ROOT_DIR}/etc/rc.local"
+>   LOCAL2=${LOCAL}2
+>   cat ${LOCAL} | grep -v "exit 0" > ${LOCAL2}
+>   echo "bash /opt/app/start.sh &" >> ${LOCAL2}
+>   echo "" >> ${LOCAL2}
+>   echo "exit 0" >> ${LOCAL2}
+>   mv ${LOCAL2} ${LOCAL}
+>   chmod 755 ${LOCAL}
+> fi
+> 
+> LOCAL="/media/rpi_root/etc/rc.local"
+> echo "-----------"
+> cat ${LOCAL}
+> echo "-----------"
+> 
