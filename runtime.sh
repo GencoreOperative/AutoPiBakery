@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# A script which wraps the pibuilder.sh script with tasks that need to be
-# performed before and after the script.
+# Runtime will act as the entrypoint for the Docker image. It wraps the
+# pibuilder.sh script and performs tasks that should be executed once per 
+# run. This includes consuming the WiFi settings and generating SSH keys.
 
 cd /opt/pibuilder
 
