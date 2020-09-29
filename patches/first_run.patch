@@ -24,3 +24,16 @@
 < # Remove DHCPCD5 - https://www.raspberrypi.org/forums/viewtopic.php?t=111709
 < apt-get remove -y dhcpcd5
 < 
+80a59,70
+> # Install user service
+> SERVICE_NAME=user.service
+> SERVICE_PATH=/etc/systemd/system/${SERVICE_NAME}
+> if [ -f "/${SERVICE_NAME}" ]; then
+> 	cp /${SERVICE_NAME} ${SERVICE_PATH}
+> 	ls -las ${SERVICE_PATH}
+> 	echo "Starting User Application Service"
+> 	systemctl start ${SERVICE_NAME}
+> 	echo "Enabling User Application Service"
+> 	systemctl enable ${SERVICE_NAME}
+> fi
+> 

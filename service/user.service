@@ -1,9 +1,9 @@
 [Unit]
-Description=Blinky
+Description=User Application
 After=network.target
 
 [Service]
-ExecStart=/bin/bash /opt/app/blink.sh
+ExecStart=/bin/bash /opt/app/start.sh
 WorkingDirectory=/opt/app/
 StandardOutput=inherit
 StandardError=inherit
