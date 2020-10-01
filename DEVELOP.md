@@ -17,9 +17,13 @@ The final run space is on the Raspberry Pi. At this stage the Pi will configure 
 
 # Service Installation
 
-This Docker image uses a [systemd](https://www.raspberrypi.org/documentation/linux/usage/systemd.md) service which is installed by modifying the `first_run.sh` script to install the service. This only needs to be done once for the system so makes sense to include in the `first_run.sh` script. This script automatically deletes itself once complete leaving the installed service which will automatically load on system start.
+This project uses [systemd](https://www.raspberrypi.org/documentation/linux/usage/systemd.md) for installation of the users application.
 
-# Error: Can't set up loop
+We achieve this by modifying the `first_run.sh` script to install the service during initial setup. This only needs to be done once for the system so makes sense to include in the `first_run.sh` script. This script automatically deletes itself once complete leaving the installed service which will automatically load on system start.
+
+The installed service will call the start.sh script. This script should not end execution, that is it should remain in a loop of some sort. If the script does exit then the systemd manager will restart the service.
+
+# Docker Run Error: `Can't set up loop`
 
 When developing on the project we will need to iterate a number of times. We noticed that eventually there was an error around this. The cause of this is the behaviour of the loop back devices which are emulated within Docker. As the Linux container uses them and unmounts them the Docker host does not appear to unmount them. This means once all 8 are used up the Docker host needs restarting.
 
@@ -48,6 +52,7 @@ Disable DropBox as it appears to like bothering the SDCard each time it is conne
 
 For the Raspbian Jessie image there appears to be 621MB of space available.
 
+```
 Filesystem           Size  Used Avail Use% Mounted on
 overlay               32G   21G  9.4G  69% /
 tmpfs                 64M     0   64M   0% /dev
@@ -57,3 +62,22 @@ osxfs                932G  734G  184G  81% /target
 /dev/vda1             32G   21G  9.4G  69% /ssh-keys
 /dev/mapper/loop6p1   42M   21M   21M  51% /media/rpi_boot
 /dev/mapper/loop6p2  1.6G  827M  621M  58% /media/rpi_root
+```
+
+# Package Dependencies
+
+Use of the provided `apt-get` functionality to download and install all dependencies is a very useful mechanism for getting everything needed for the project. However in the case of a fixed operating system and fixed dependencies this can become an efficient process of repeatedly downloading and installing the same packages.
+
+We can optimise this process by downloading the dependencies once and then keeping a copy of the `.deb` package files. These can then be installed by the users application on first run. This allows us to cut down on time spent downloading and updating packages.
+
+```
+sudo apt-get update
+sudo apt-get install -d openjdk-8-jre-headless
+```
+This will place all of the dependencies into the cache `/var/cache/apt/archives`. From here we can copy these off the Raspberry Pi and then store them for installation as part of the users application.
+
+Installation is a simple as:
+
+```
+sudo dpkg -i /path/to/dependencies/*.deb
+```

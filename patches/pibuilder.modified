@@ -120,13 +120,14 @@ if [ -f /opt/pibuilder/user.service ]; then
 fi
 # Install the users application
 if [  -f /input/start.sh ]; then
+  echo ""
   echo "Installing user application"
   APP="${ROOT_DIR}/opt/app"
   mkdir -p ${APP}
   cp -Rf /input/* "${APP}"
-  chmod 755 "${APP}/start.sh"
   echo "Contents of /opt/app"
   ls -las ${APP}
+  echo ""
 fi
 
 cp ./scripts/first_run.sh "${ROOT_DIR}/first_run.sh"

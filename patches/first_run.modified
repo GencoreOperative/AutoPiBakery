@@ -56,6 +56,17 @@ if test "%PI_MAILGUN_API_KEY%" && test "%PI_MAILGUN_DOMAIN%" && test "%PI_EMAIL_
     -F text="New %PI_USERNAME%@${PI_CONFIG_HOSTNAME} setup on: ${PI_IP_ADDRESS}"
 fi
 
+# Change permissions on User Application files
+APP="/opt/app"
+if [ -d "${APP}" ]; then
+  chown %PI_USERNAME%:%PI_USERNAME% ${APP}
+  chown %PI_USERNAME%:%PI_USERNAME% ${APP}/*
+  chmod 755 ${APP}/start.sh
+
+  echo "Contents of /opt/app"
+  ls -las ${APP}
+fi
+
 # Install user service
 SERVICE_NAME=user.service
 SERVICE_PATH=/etc/systemd/system/${SERVICE_NAME}

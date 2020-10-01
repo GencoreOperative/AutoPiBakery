@@ -1,6 +1,6 @@
 # AutoPiBakery
 
-A Docker project which aims to make creating a Raspberry Pi project simple. A challenge when working with a Raspberry Pi is the repeated tasks of locating an image, configuration, and installing your project code onto the Pi. This project helps mix these ingredients together in one command.
+A Docker project which aims to make creating a Raspberry Pi project simple. When working with a Raspberry Pi project, one of the challenges is locating the base image, configuring it on the device, and installing your project code. This project helps mix these ingredients together in one single command.
 
 The motivation behind this project is to take some of the repetition out of the process of making a Raspberry Pi project. Typically as engineers we are familiar with automating many stages of development. Creating the artifact to deploy to the Raspberry Pi should be no different in this regard.
 
@@ -16,18 +16,16 @@ At a high level, the Docker command for this project will start with a stock Ras
 
 In order to use this Docker command you will want to have two folders in a local directory.
 
-* `input`: will contain the project files you would like included in the Raspberry Pi image. This must include a script called `start.sh` which will be the entry point for your application.
+* `input`: will contain the project files you would like included in the Raspberry Pi image.
 * `output`: will be the location where the image is generated to and includes the generated SSH keys that can be used to access the system.
 
 # Input Files
 
-These are the project files and essentially needs to be everything you need for your project. For example, if it is a Java application then you will need to include the Java Runtime as well. Because these files will be executing on the Raspberry Pi they all need to be aimed at the ARM CPU architecture.
+These are the project files and essentially needs to consist of everything your project needs to run on the Raspberry Pi. In the case of a Raspberry Pi Zero W this will be an ARMv6 CPU and so all binaries need to be compatible with this target system.
 
-Importantly, there needs to be a script called `start.sh`. This script will be the entry point for your project and should both install any dependencies into the Raspberry Pi and also launch the project.
+There is a single entrypoint which must be included. This is the `start.sh` script. This script will need to both install any dependencies have and also launch the application. Importantly, the script must not exit execution, otherwise it will be restarted.
 
-`start.sh` will be called once on startup of the Raspberry Pi.
-
-Space is limited to a few hundred MB.
+Storage space within the Raspberry Pi image is limited to a few hundred MB.
 
 # Run Examples
 
@@ -50,14 +48,11 @@ docker run \
     -e PI_WIFI_PASS=<wireless Password> \
     -v $PWD/input:/input \
     -v $PWD/output:/output \
-    -ti auto-pi-bakery:raspbian-jessie
+    -ti gencore/auto-pi-bakery-jessie:latest
 ```
 
 # Contacting the Raspberry Pi
-
-TODO: https://www.raspberrypi.org/documentation/remote-access/ip-address.md
-
-Once the Pi has been powered on, it will start its boot up sequence which will include automatic configuration of the Wireless settings (if used) and other configuration. Once it has completed this setup it will be accessible on the local network with the standard multicast network address:
+Once the Pi has been powered on, it will start its boot up sequence which will include automatic configuration of the Wireless settings (if used) and other configuration. Once it has completed this setup it will be accessible on the local network with the [standard multicast network address](https://www.raspberrypi.org/documentation/remote-access/ip-address.md):
 
 ```
 $ ping raspberrypi.local
@@ -66,17 +61,17 @@ PING raspberrypi.local (192.168.1.84): 56 data bytes
 64 bytes from 192.168.1.84: icmp_seq=1 ttl=64 time=7.195 ms
 ```
 
-DETAIL here: after the first boot, this address will no longer respond. Instead the new hostname of the system will respond. Therefore knowing the hostname of the system is important.
+Due to the installation sequence, the Rasperry Pi will restart after it has been configured. Therefore it will be accessible on this access only for a short while. Afterwards it will no longer respond on this multicast address and instead will respond on a dynamically configured hostname.
 
+We recommend starting a `ping` on the `raspberrypi.local` address and observing the IP address that responds.
 
-From here we can SSH onto the device by using the private key that was generated as part of the installation:
+Once you know the IP address of the system you can SSH to the system using the following:
 
 ```
-$ ssh -i output/key user@192.168.1.84
+ssh -i output/key user@192.168.1.84
 ```
 
-
-## Known Error
+## Known Error `can't set up loop`
 
 When running this multiple times with Docker for MacOS we have observed that there will come a point where there are no more Loop devices available for the system to mount to. In this case, simply restart Docker.
 

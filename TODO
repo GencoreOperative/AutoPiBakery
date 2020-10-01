@@ -1,0 +1,13 @@
+Add support for multiple base images.
+
+Add sample Java Project
+
+Rework documentation to be clearer how it is to be used
+
+Make app folder owned by 'user'
+- User Application service will run as the user
+- Have chmod 777 - bad
+- Will need to - at first_run, update that folder as we will know the user by then.
+
+Make 'user' an environment variable
+- Need to update User Application file with user
