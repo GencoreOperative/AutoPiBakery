@@ -1,6 +1,18 @@
-Add support for multiple base images.
+Rename tag to Jessie-Lite
+Introduce Jessie-Full
+
+When did Raspbian switch to the next Debian version?
+Add support for the next version as well - both Lite and Full
+
+
+Add sample Python Project
 
 Add sample Java Project
+
+Add README note on using a WiFi Hotspot to assist with uncooperative networking environments.
+
+Error if no start.sh script is present.
+
 
 Rework documentation to be clearer how it is to be used
 
