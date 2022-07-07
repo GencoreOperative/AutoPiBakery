@@ -44,7 +44,7 @@ mkdir -p output && docker run \
     -e PI_WIFI_PASS=<wireless Password> \
     -v $PWD/input:/input \
     -v $PWD/output:/output \
-    -ti gencore/auto-pi-bakery-raspbian:latest
+    -ti gencore/auto-pi-bakery:latest
 ```
 
 # Contacting the Raspberry Pi
