@@ -1,6 +1,6 @@
 FROM riggerthegeek/pibuilder:0.2.1
 
-ARG JESSIE_LITE_VERSION
+ARG RASPBIAN_LITE_VERSION
 
 #
 # Install/Build pre-requisites
@@ -14,9 +14,9 @@ RUN cd /tmp && curl -s https://ftp.gnu.org/gnu/patch/patch-2.7.tar.gz | tar xvzf
 #
 RUN mkdir /opt/pibuilder/cache
 
-RUN curl -# https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-$JESSIE_LITE_VERSION/$JESSIE_LITE_VERSION-raspbian-jessie-lite.zip -o /opt/pibuilder/cache/os.zip
+RUN curl -# https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-$RASPBIAN_LITE_VERSION/$RASPBIAN_LITE_VERSION-raspbian-jessie-lite.zip -o /opt/pibuilder/cache/os.zip
 
-RUN SUM=$(printf %s https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-$JESSIE_LITE_VERSION/$JESSIE_LITE_VERSION-raspbian-jessie-lite.zip | md5sum | cut -c1-32); mv /opt/pibuilder/cache/os.zip /opt/pibuilder/cache/os.$SUM.zip
+RUN SUM=$(printf %s https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-$RASPBIAN_LITE_VERSION/$RASPBIAN_LITE_VERSION-raspbian-jessie-lite.zip | md5sum | cut -c1-32); mv /opt/pibuilder/cache/os.zip /opt/pibuilder/cache/os.$SUM.zip
 
 # Output folder is used for finished Raspberry Pi image
 RUN mkdir /output
